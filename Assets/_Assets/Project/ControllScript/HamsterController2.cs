@@ -12,6 +12,7 @@ public class HamsterController2 : MonoBehaviour
     public float rotateSpeed ;
     public float sprintSpeed;
     public float jumpPower;
+    public float jumpWaitTime = 0.8f;
 
     [Tooltip("메인 카메라")]
     public Camera _camera; // 메인 카메라
@@ -37,6 +38,7 @@ public class HamsterController2 : MonoBehaviour
 
     [Header ("-------------------------------------------------------")]
     public bool canMove = false;  // 이동 가능 여부
+    private bool canJump = true;
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
 
     public void Awake()
@@ -58,7 +60,14 @@ public class HamsterController2 : MonoBehaviour
 
             HandleMove();
             HandleSprint();
-            HandleJump();
+
+            if (canJump)
+            {
+                if (IsGrounded())
+                {
+                    HandleJump();
+                }
+            }
 
             if (isNearObject && Input.GetKeyDown(KeyCode.E) && !climbing)
             {
@@ -87,7 +96,7 @@ public class HamsterController2 : MonoBehaviour
         inAir = !IsGrounded();
     }
 
-    bool IsGrounded()
+    public bool IsGrounded()
     {
         // 아래로 레이캐스트를 쏴서 바닥에 닿았는지 체크
         return Physics.Raycast(transform.position, Vector3.down, raycastDist); // 작은 거리로 바닥 체크
@@ -100,11 +109,16 @@ public class HamsterController2 : MonoBehaviour
         canMove = true;  // 이동 가능
         awake = false;
     }
+    private IEnumerator StopJump(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime);  
+        canJump = true;
+    }
 
 
 
     #region Move/Sprint/Jump
-   public void HandleMove()
+    public void HandleMove()
 {
     if (!climbing)
     {
@@ -149,9 +163,6 @@ public class HamsterController2 : MonoBehaviour
     }
 }
 
-
-
-
     public void HandleSprint()
     {
         isSprint = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -174,7 +185,8 @@ public class HamsterController2 : MonoBehaviour
 
         _rigidbody.AddForce(transform.up * jumpPower * 100f);
         isJumping = true;
-        //inAir = true;
+        canJump = false;
+        StartCoroutine(StopJump(jumpWaitTime));
     }
     #endregion
 

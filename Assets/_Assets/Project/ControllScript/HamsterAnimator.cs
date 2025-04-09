@@ -121,7 +121,18 @@ public class HamsterAnimator : MonoBehaviour
             playerAnimator.SetBool("Awake", false);
         }
         #endregion
-        
+
+        #region IsGrounded
+        if (hamsterController.IsGrounded())
+        {
+            playerAnimator.SetBool("IsGrounded", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("IsGrounded", false);
+        }
+        #endregion
+
         if (GameManager.Instance.isEating)
         {
             hamsterController.canMove = false;
