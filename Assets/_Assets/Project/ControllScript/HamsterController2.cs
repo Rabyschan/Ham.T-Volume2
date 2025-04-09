@@ -94,12 +94,18 @@ public class HamsterController2 : MonoBehaviour
     void Update()
     {
         inAir = !IsGrounded();
+        if (IsGrounded() )
+        {
+            isJumping = false;
+            _rigidbody.useGravity = true;
+        }
     }
 
     public bool IsGrounded()
     {
         // 아래로 레이캐스트를 쏴서 바닥에 닿았는지 체크
         return Physics.Raycast(transform.position, Vector3.down, raycastDist); // 작은 거리로 바닥 체크
+
     }
 
     // 2초 후 canMove를 활성화하는 코루틴
@@ -195,8 +201,8 @@ public class HamsterController2 : MonoBehaviour
     {
         if (collision.collider.CompareTag("Ground"))
         {
-            isJumping = false;
-            _rigidbody.useGravity = true;
+            //isJumping = false;
+            //_rigidbody.useGravity = true;
 
             //inAir = false;
             //isGrounded =true;
