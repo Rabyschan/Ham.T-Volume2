@@ -1,12 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResetOnStart : MonoBehaviour
 {
+    public int defaultSlotId = 0;
+
     void Awake()
     {
-        ResetAllCostumeDataOnStart();
+        int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
+        bool needsInit = PlayerPrefs.GetInt("NeedsInit", 0) == 1;
+
+        if (selectedSlot == -1 || !PlayerPrefs.HasKey($"PlayerPosX_{selectedSlot}"))
+        {
+            ResetAllCostumeDataOnStart();
+        }
+        else
+        {
+            Debug.Log("저장된 데이터가 있으므로 초기화하지 않음.");
+        }
+        PlayerPrefs.DeleteKey("NeedsInit"); // 한 번만 초기화하게
     }
 
     private void ResetAllCostumeDataOnStart()
@@ -14,13 +25,12 @@ public class ResetOnStart : MonoBehaviour
         PlayerPrefs.DeleteKey("SelectedCostume");
         PlayerPrefs.DeleteKey("SelectedSkined");
 
-        // 모든 코스튬 보유 정보 초기화 (예: 1~3번 코스튬)
         for (int i = 1; i <= 3; i++)
         {
             PlayerPrefs.SetInt($"HasCostume_{i}", 0);
         }
 
         PlayerPrefs.Save();
-        Debug.Log("게임 시작 시 모든 HasCostume 정보 초기화 완료!");
+        Debug.Log("저장된 데이터가 없어서 초기화 완료!");
     }
 }

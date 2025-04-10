@@ -65,8 +65,6 @@ public class UIPanelManager : MonoBehaviour
             activePanels.Add(checkpanel);
         }
         UpdateActivePanels();
-
-        Debug.Log($"[ShowPanel] 활성화된 패널 목록: {string.Join(", ", activePanels)}");
     }
 
     public void ClosePanel(string panelName)

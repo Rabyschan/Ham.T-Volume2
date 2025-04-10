@@ -40,4 +40,6 @@ public enum ButtonType
     //Quit_Pop
     //P_Quit_Yes,
     P_Quit_No,
+
+    P_Challenge,
 }

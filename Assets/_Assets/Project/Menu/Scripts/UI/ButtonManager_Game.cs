@@ -22,6 +22,7 @@ public class ButtonManager_Game : MonoBehaviour
     //[SerializeField] Button bTN_P_Save_Yes;
     [SerializeField] Button bTN_P_Save_No;
     [SerializeField] Button bTN_P_Quit_No;
+    [SerializeField] Button bTN_P_Challenge;
 
     public Dictionary<ButtonType, Button> buttonDictionary = new Dictionary<ButtonType, Button>();
 
@@ -51,7 +52,9 @@ public class ButtonManager_Game : MonoBehaviour
             {ButtonType.P_Option_Quit,bTN_P_Option_Quit},
 
             {ButtonType.P_Save_No,bTN_P_Save_No},
-            {ButtonType.P_Quit_No,bTN_P_Quit_No}
+            {ButtonType.P_Quit_No,bTN_P_Quit_No},
+
+            {ButtonType.P_Challenge,bTN_P_Challenge}
         };
     }
 
@@ -99,13 +102,13 @@ public class ButtonManager_Game : MonoBehaviour
             case ButtonType.P_Quit_No:
                 UIPanelManager.Instance.ClosePanel("Quit_P");
                 break;
-            //case ButtonType.Pause_Continue:
-            //    UIPanelManager.Instance.CloseAllPanels();
-            //    break;
             case ButtonType.P_Slot_Quit:
             case ButtonType.P_Option_Quit:
             case ButtonType.P_Save_Yes:
                 UIPanelManager.Instance.ShowPanel("Pause", false);
+                break;
+            case ButtonType.P_Challenge:
+                UIPanelManager.Instance.ShowPanel("Challenges", false);
                 break;
             default:
                 Debug.LogWarning($"[ButtonManager] 처리되지 않은 버튼 타입: {type}");

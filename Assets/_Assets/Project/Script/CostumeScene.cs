@@ -11,7 +11,6 @@ public class CostumeScene : MonoBehaviour
         _player = FindObjectOfType<HamsterController2>();
         if (_player != null)
         {
-            //_costumescenePlayer.allowInput = false;
             _player.allowInput = false; // 입력 정지
         }
         CursorManager.Instance.SetCursorVisable(true);

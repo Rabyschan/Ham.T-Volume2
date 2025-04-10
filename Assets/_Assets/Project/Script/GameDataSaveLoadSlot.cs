@@ -22,7 +22,7 @@ namespace GameSave
         [SerializeField] private Button remove_btn;
 
         [SerializeField] private Transform playerPosition;
-        [SerializeField] private TMP_Text saveTimeText;
+        //[SerializeField] private TMP_Text saveTimeText;
 
         private void Awake()
         {
@@ -31,16 +31,30 @@ namespace GameSave
 
         private void Start()
         {
-            // 버튼 이벤트 등록은 한 번만 실행
-            save_btn.onClick.AddListener(CheckPointSave);
-            load_btn.onClick.AddListener(CheckPointLoad);
-            remove_btn.onClick.AddListener(CheckPointRemove);
-
             // 게임 씬 진입 시 자동 로드 처리
             int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
             if (selectedSlot == slotId && PlayerPrefs.HasKey($"PlayerPosX_{slotId}"))
             {
                 CheckPointLoad();
+            }
+        }
+
+        public void OnClickSlotButton()
+        {
+            PlayerPrefs.SetInt("SelectedSlot", slotId); // 슬롯 선택 기억
+
+            bool hasSaveData = PlayerPrefs.HasKey($"PlayerPosX_{slotId}");
+
+            if (hasSaveData)
+            {
+                // 저장된 데이터가 있을 경우 → 로드 & 씬 전환
+                SceneManager.LoadScene("GameScenev2");
+            }
+            else
+            {
+                // 저장된 데이터가 없을 경우 → 초기화 & 씬 전환
+                PlayerPrefs.SetInt("NeedsInit", 1);
+                SceneManager.LoadScene("GameScenev2");
             }
         }
 
@@ -95,6 +109,8 @@ namespace GameSave
                 float y = PlayerPrefs.GetFloat($"PlayerPosY_{slotId}");
                 float z = PlayerPrefs.GetFloat($"PlayerPosZ_{slotId}");
 
+                Debug.Log(x);
+
                 playerPosition.position = new Vector3(x, y, z);
                 Debug.Log($"슬롯 {slotId}: 위치 불러오기 완료 - {playerPosition.position}");
 
@@ -105,6 +121,8 @@ namespace GameSave
                 // 저장된 시간 표시
                 string savedTime = PlayerPrefs.GetString($"SaveTime_{slotId}");
                 Debug.Log($"슬롯 {slotId}의 저장 시간: {savedTime}");
+
+                PlayerPrefs.SetInt("IsLoadedFromSlot", 1);  // 로드 플래그 설정
 
                 // 코스튬 UI 갱신
                 for (int i = 1; i <= 3; i++)
@@ -129,6 +147,19 @@ namespace GameSave
             else
             {
                 Debug.Log($"슬롯 {slotId}: 저장된 위치 없음. 기본 위치 사용");
+            }
+        }
+
+        public static void LoadSlotById(int slotId)
+        {
+            var slots = FindObjectsOfType<GameDataSaveLoadSlot>();
+            foreach (var slot in slots)
+            {
+                if (slot.slotId == slotId)
+                {
+                    slot.CheckPointLoad();
+                    break;
+                }
             }
         }
 
