@@ -80,6 +80,7 @@ public class ButtonManager_Game : MonoBehaviour
         {
             case ButtonType.Pause_Save:
                 UIPanelManager.Instance.ShowPanel("Save", false);
+                UIPanelManager.Instance.SlotPanelState();
                 break;
             case ButtonType.Pause_Option:
                 UIPanelManager.Instance.ShowPanel("Option", false);

@@ -9,6 +9,8 @@ public class UIPanelManager : MonoBehaviour
     private List<GameObject> activePanels = new List<GameObject>(); // 현재 활성화된 패널들
     private List<GameObject> excludePanels = new List<GameObject>(); // 제외할 패널 리스트
 
+    int totalSlotCount = 3;
+
     private void Awake()
     {
         if (Instance == null)
@@ -32,6 +34,7 @@ public class UIPanelManager : MonoBehaviour
 
         HideAllPanels();
         UpdateActivePanels();
+        SlotPanelState();
 
         Debug.Log("🔄 UI 요소 및 오디오 설정 자동 연결 완료!");
     }
@@ -48,34 +51,35 @@ public class UIPanelManager : MonoBehaviour
         }
     }
 
-    GameObject checkpanel = null;
+    GameObject targetPanel = null;
 
     public void ShowPanel(string panelName, bool allowMultiple = false)
     {
-        GetPanelByName(panelName);
+        targetPanel = GetPanelByName(panelName);
 
         if (!allowMultiple)
         {
             CloseAllPanels(); // 기존 패널을 모두 닫음
         }
 
-        checkpanel.SetActive(true);
-        if (!activePanels.Contains(checkpanel))
+        targetPanel.SetActive(true);
+        if (!activePanels.Contains(targetPanel))
         {
-            activePanels.Add(checkpanel);
+            activePanels.Add(targetPanel);
         }
         UpdateActivePanels();
     }
 
     public void ClosePanel(string panelName)
     {
-        GetPanelByName(panelName);
+        GameObject panelToClose = GetPanelByName(panelName);
 
-        if (checkpanel.activeSelf)
+        if (panelToClose != null && panelToClose.activeSelf)
         {
-            checkpanel.SetActive(false);
-            activePanels.Remove(checkpanel);
+            panelToClose.SetActive(false);
+            activePanels.Remove(panelToClose);
         }
+
         UpdateActivePanels();
     }
 
@@ -105,10 +109,27 @@ public class UIPanelManager : MonoBehaviour
         {
             if (obj.name == panelName)
             {
-                checkpanel = obj;
-                break;
+                return obj;
             }
         }
         return null;
+    }
+
+    public void SlotPanelState()
+    {
+        for (int i = 1; i <= totalSlotCount; i++)
+        {
+            bool hasSave = GameDataManager.Instance != null && GameDataManager.Instance.TryGetSlotData(i, out _);
+
+            Debug.Log($"{i}는 {hasSave}");
+            string savePanelName = $"Slot{i}Save";
+            string emptyPanelName = $"Slot{i}Empty";
+
+            GameObject savePanel = GetPanelByName(savePanelName);
+            GameObject emptyPanel = GetPanelByName(emptyPanelName);
+
+            if (savePanel != null) savePanel.SetActive(hasSave);
+            if (emptyPanel != null) emptyPanel.SetActive(!hasSave);
+        }
     }
 }

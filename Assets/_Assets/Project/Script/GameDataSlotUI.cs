@@ -40,7 +40,7 @@ public class GameDataSlotUI : MonoBehaviour
         PlayerPrefs.SetInt("SelectedSlot", slotId);
 
         // 로딩 준비
-        loadScene.SetSlotId(slotId);
+        //loadScene.SetSlotId(slotId);
 
         Debug.Log($"슬롯 {slotId} 선택됨 → 로딩 준비 완료");
     }
@@ -51,8 +51,8 @@ public class GameDataSlotUI : MonoBehaviour
 
         if (hasSave)
         {
-            saveUI.SetActive(true);
-            emptyUI.SetActive(false);
+            //saveUI.SetActive(true);
+            //emptyUI.SetActive(false);
 
             // 저장된 시간 불러오기
             string saveTime = PlayerPrefs.GetString($"SaveTime_{slotId}", "No Save");

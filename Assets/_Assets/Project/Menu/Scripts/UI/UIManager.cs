@@ -2,7 +2,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
@@ -136,7 +135,7 @@ public class UIManager : MonoBehaviour
 
     #endregion
 
-    #region NocticeANimation
+    #region NocticeAnimation
 
     public void ShowNoticeByAnimator(string message, float duration)
     {

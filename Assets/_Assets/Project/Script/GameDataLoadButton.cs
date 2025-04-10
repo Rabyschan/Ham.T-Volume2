@@ -25,7 +25,7 @@ public class GameDataLoadButton : MonoBehaviour
         PlayerPrefs.SetInt("SelectedSlot", slotId);
 
         // 로딩 준비
-        loadScene.SetSlotId(slotId);
+        //loadScene.SetSlotId(slotId);
 
         // 로딩 UI 보여주기 (또는 저장된 데이터 팝업 등)
         savePopupUI.SetActive(true);

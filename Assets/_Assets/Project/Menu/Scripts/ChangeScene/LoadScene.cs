@@ -11,36 +11,41 @@ namespace ChangeScene
         public GameObject save_Pop;
         public SceneLoader sceneLoader; // SceneLoader 스크립트 참조
 
-        private int selectedSlotId = -1;
+        private SlotData? selectedSlot; // 슬롯 전체 정보 저장
 
-        //슬롯 선택 시 호출 (외부에서 슬롯ID 세팅)
-        public void SetSlotId(int Id)
+        private void OnEnable()
         {
-            selectedSlotId = Id;
+            SaveSlotInfo.OnSlotSelected += HandleSlotSelected;
+        }
+
+        private void OnDisable()
+        {
+            SaveSlotInfo.OnSlotSelected -= HandleSlotSelected;
         }
 
         private void Start()
         {
-            // 버튼 클릭 이벤트를 코드에서 직접 등록 (OnClick 사용 X)
             startButton.onClick.AddListener(OnClickStart);
         }
+
+        private void HandleSlotSelected(SlotData data)
+        {
+            selectedSlot = data;
+        }
+
 
         // 로드 버튼 클릭 시
         public void OnClickStart()
         {
-            if (selectedSlotId >= 0)
+            if (selectedSlot.HasValue)
             {
-                // 선택된 슬롯 저장 (다른 스크립트용)
-                PlayerPrefs.SetInt("SelectedSlot", selectedSlotId);
+                var data = selectedSlot.Value;
+
+                PlayerPrefs.SetInt("SelectedSlot", data.slotId);
                 PlayerPrefs.Save();
 
-                // 저장 데이터 로드
-                GameDataSaveLoadSlot.LoadSlotById(selectedSlotId);
+                GameDataSaveLoadSlot.LoadSlotById(data.slotId);
 
-                // 로딩 UI 닫기
-                save_Pop.SetActive(false);
-
-                // 씬 전환
                 sceneLoader.LoadGameScene();
             }
             else

@@ -74,6 +74,7 @@ public class ButtonManager_Main : MonoBehaviour
         {
             case ButtonType.Main_Start:
                 UIPanelManager.Instance.ShowPanel("Save", false);
+                UIPanelManager.Instance.SlotPanelState();
                 break;
             case ButtonType.Main_Option:
                 UIPanelManager.Instance.ShowPanel("Option", false);
