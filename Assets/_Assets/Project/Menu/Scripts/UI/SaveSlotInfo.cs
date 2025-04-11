@@ -13,7 +13,11 @@ public class SaveSlotInfo : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI skinText;
     [SerializeField] private TextMeshProUGUI costumeText;
-    
+
+    [SerializeField] private Button save_btn;
+    [SerializeField] private Button load_btn;
+    [SerializeField] private Button remove_btn;
+
     private void Awake()
     {
         bTN_Slot.onClick.AddListener(OnSlotClicked);
@@ -32,6 +36,7 @@ public class SaveSlotInfo : MonoBehaviour
             costumeText.text = $"Costume : 0/{GameDataManager.Instance.totalCostumes}";
             skinText.text = $"Skin : 0/{GameDataManager.Instance.totalSkins}";
         }
+        UpdateSlot(); // 버튼 상태도 초기화
     }
 
     private void OnSlotClicked()
@@ -72,5 +77,16 @@ public class SaveSlotInfo : MonoBehaviour
         timeText.text = data.saveTime;
         costumeText.text = $"Costume : {data.costumeCount}/{data.totalCostumes}";
         skinText.text = $"Skin : {data.skinCount}/{data.totalSkins}";
+    }
+
+    public void UpdateSlot()
+    {
+        bool hasSave = PlayerPrefs.HasKey($"PlayerPosX_{slotId}");
+
+        load_btn.interactable = hasSave;
+        remove_btn.interactable = hasSave;
+
+        // 저장 여부에 관계없이 Save 버튼은 항상 활성화할 수도 있음
+        save_btn.interactable = true;
     }
 }
