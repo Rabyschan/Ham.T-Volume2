@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class HamsterController2 : MonoBehaviour
 {
+    public static bool NeedLoadPosition { get; set; }
+    public static Vector3 PositionOnLoad { get; set; }
+
     [SerializeField] float raycastDist = 0.1f;
 
     [Header("Player")]
@@ -44,6 +47,15 @@ public class HamsterController2 : MonoBehaviour
     {
         _camera = Camera.main;
         _rigidbody = GetComponent<Rigidbody>();
+
+        if (NeedLoadPosition)
+            LoadPosition();
+    }
+
+    private void LoadPosition()
+    {
+        transform.position = PositionOnLoad;
+        NeedLoadPosition = false;
     }
 
     public void FixedUpdate()
