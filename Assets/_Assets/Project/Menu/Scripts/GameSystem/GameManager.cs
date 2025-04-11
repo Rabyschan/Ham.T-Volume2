@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
 
     public float score = 0;
     public bool isEating;
+    public float totalScore;
 
     private void Awake()
     {
@@ -35,7 +36,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        UIManager.Instance.ScoreUI(0);
+        //UIManager.Instance.ScoreUI(0);
     }
     //점수를 증가시킴
     public void SetScore(float newScore)

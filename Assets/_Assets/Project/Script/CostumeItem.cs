@@ -36,10 +36,12 @@ public class CostumeItem : MonoBehaviour
 
             PlayerPrefs.SetInt($"HasCostume_{costumeId}", 1);
             PlayerPrefs.Save();
-            
+
             CostumeUI.Instance.UpdateBtn(costumeId);
             Debug.Log("UI갱신");
             UIManager.Instance.ShowNoticeByAnimator($"Get {itemName}!", 2f);
+
+            challangeCondition.Instance.GetItem(costumeId);
 
             Destroy(this.gameObject); // 아이템 제거
             
