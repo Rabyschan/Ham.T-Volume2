@@ -63,6 +63,10 @@ public class CostumeUI : MonoBehaviour
     private Costume costume;
     //private Dictionary<int, GameObject> costumeButtons = new Dictionary<int, GameObject>(); // 버튼 저장
 
+    public GameObject GetUI_SunflowerHat;
+    public GameObject GetUI_BearHat;
+    public GameObject GetUI_ChefHat;
+
     private void Awake()
     {
         // 버튼 초기화

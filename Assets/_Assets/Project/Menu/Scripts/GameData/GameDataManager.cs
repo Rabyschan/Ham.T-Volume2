@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameDataManager : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class GameDataManager : MonoBehaviour
     public int totalSkins = 1;
 
     [SerializeField] private Transform player;
+
 
     private void Awake()
     {
@@ -98,7 +100,10 @@ public class GameDataManager : MonoBehaviour
     {
         if (!PlayerPrefs.HasKey($"PlayerPosX_{slotId}")) return;
 
-        player.position = LoadVector3($"PlayerPos", slotId);
+        HamsterController2.NeedLoadPosition = true;
+        HamsterController2.PositionOnLoad = LoadVector3($"PlayerPos", slotId);
+
+        //player.position = LoadVector3($"PlayerPos", slotId);
 
         int selectedCostume = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
         int selectedSkin = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
@@ -122,7 +127,46 @@ public class GameDataManager : MonoBehaviour
         Debug.Log($"슬롯 {slotId} 불러오기 완료");
     }
 
-    private bool IsSlotSaved(int slotId)
+    public void RemoveSlot(int slotId)
+    {
+        PlayerPrefs.DeleteKey($"PlayerPosX_{slotId}");
+        PlayerPrefs.DeleteKey($"PlayerPosY_{slotId}");
+        PlayerPrefs.DeleteKey($"PlayerPosZ_{slotId}");
+
+        // 스튬 & 스킨 정보 삭제
+        PlayerPrefs.DeleteKey($"SelectedCostume_{slotId}");
+        PlayerPrefs.DeleteKey($"SelectedSkined_{slotId}");
+
+        PlayerPrefs.DeleteKey($"IsSaved_{slotId}");
+
+        PlayerPrefs.DeleteKey($"HasCostume_{slotId}");
+        PlayerPrefs.DeleteKey($"SaveTime_{slotId}");
+
+        Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
+    }
+
+    private void RemoveCollectedCostumeItems()
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            if (PlayerPrefs.GetInt($"HasCostume_{i}", 0) == 1)
+            {
+                // 씬에 있는 모든 CostumeItem을 검색
+                var items = FindObjectsOfType<CostumeItem>();
+                foreach (var item in items)
+                {
+                    if (item.costumeId == i)
+                    {
+                        Destroy(item.gameObject);
+                        Debug.Log($"CostumeItem {i} 이미 보유 중 → 제거");
+                    }
+                }
+            }
+        }
+    }
+
+
+private bool IsSlotSaved(int slotId)
     {
         return PlayerPrefs.HasKey($"SaveTime_{slotId}") &&
                PlayerPrefs.HasKey($"PlayerPosX_{slotId}") &&
@@ -144,4 +188,5 @@ public class GameDataManager : MonoBehaviour
         float z = PlayerPrefs.GetFloat($"{prefix}Z_{slotId}");
         return new Vector3(x, y, z);
     }
+
 }
