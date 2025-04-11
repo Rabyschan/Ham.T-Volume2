@@ -19,8 +19,6 @@ public class HamsterAnimator : MonoBehaviour
     public void Update()
     {
         if (hamsterController == null) return;
-
-        // 애니메이션 상태 변경
         HandleAnimations();
     }
 
@@ -79,7 +77,6 @@ public class HamsterAnimator : MonoBehaviour
         {
             playerAnimator.SetBool("IsClimbing", false);
         }
-
 
         if (hamsterController.stopClimbing)
         {
@@ -142,12 +139,10 @@ public class HamsterAnimator : MonoBehaviour
         }
         else
         {
-
             playerAnimator.SetBool("IsEating", false);
         }
 
         playerAnimator.SetFloat("CollectSeed", GameManager.Instance.score);
-
     }
 
     private IEnumerator Wait(float waitTime)

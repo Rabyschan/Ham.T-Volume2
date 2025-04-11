@@ -11,7 +11,11 @@ public class CostumeScene : MonoBehaviour
         _player = FindObjectOfType<HamsterController2>();
         if (_player != null)
         {
+<<<<<<< Updated upstream
             _player.allowInput = false; // 입력 정지
+=======
+            _player.canMove = false; // 입력 정지
+>>>>>>> Stashed changes
         }
         CursorManager.Instance.SetCursorVisable(true);
     }
