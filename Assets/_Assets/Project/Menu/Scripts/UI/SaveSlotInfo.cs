@@ -32,7 +32,7 @@ public class SaveSlotInfo : MonoBehaviour
 
     private void Update()
     {
-        UpdateSlot(); // 버튼 상태도 초기화
+        
     }
 
     private void OnSlotClicked()
@@ -84,22 +84,10 @@ public class SaveSlotInfo : MonoBehaviour
         }
     }
 
-
     private void UpdateUI(SlotData data)
     {
         timeText.text = data.saveTime;
         costumeText.text = $"Costume : {data.costumeCount}/{data.totalCostumes}";
         skinText.text = $"Skin : {data.skinCount}/{data.totalSkins}";
-    }
-
-    public void UpdateSlot()
-    {
-        bool hasSave = PlayerPrefs.HasKey($"PlayerPosX_{slotId}");
-
-        load_btn.interactable = hasSave;
-        remove_btn.interactable = hasSave;
-
-        // 저장 여부에 관계없이 Save 버튼은 항상 활성화할 수도 있음
-        save_btn.interactable = true;
     }
 }

@@ -39,6 +39,7 @@ public class GameManager : MonoBehaviour
         //UIManager.Instance.ScoreUI(0);
     }
     //점수를 증가시킴
+
     public void SetScore(float newScore)
     {
         score += newScore;

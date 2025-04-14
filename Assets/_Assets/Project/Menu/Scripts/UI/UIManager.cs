@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +12,8 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance { get; private set; }
 
     public bool isPaused = false;
+    [SerializeField] private GameObject noticePanel;
+    [SerializeField] private TMP_Text noticeText;
 
     private void Awake()
     {
@@ -204,28 +207,47 @@ public class UIManager : MonoBehaviour
 
     #region NocticeAnimation
 
-    public void ShowNoticeByAnimator(string message, float duration)
+    public void ShowNoticeByAnimator(float duration, bool isSaveNotice)
     {
         foreach (var obj in UIPanelManager.Instance.uiPanels)
         {
             if (obj.name == "Notice")
             {
-                var text = obj.GetComponentInChildren<TextMeshProUGUI>();
+                var noticeTransform = obj.transform;
+
+                // 자식 안에서 텍스트 오브젝트 탐색
+                var saveText = noticeTransform.Find("CheckPointSave_Txt")?.gameObject;
+                var loadText = noticeTransform.Find("CheckPointLoad_Txt")?.gameObject;
                 var anim = obj.GetComponent<Animator>();
 
-                if (text != null && anim != null)
+                if (anim != null)
                 {
-                    obj.SetActive(true); // 꺼져 있으면 켜줌
-                    text.text = message;
+                    obj.SetActive(true);
                     anim.SetTrigger("NoticeShow");
+
+                    if (isSaveNotice && saveText != null)
+                    {
+                        saveText.SetActive(true);
+                        loadText?.SetActive(false);
+                        StartCoroutine(HideNoticeTextAfterDelay(saveText, duration, obj));
+                    }
+                    else if (!isSaveNotice && loadText != null)
+                    {
+                        loadText.SetActive(true);
+                        saveText?.SetActive(false);
+                        StartCoroutine(HideNoticeTextAfterDelay(loadText, duration, obj));
+                    }
                 }
+
                 break;
             }
         }
     }
-    private IEnumerator HideNoticeAfterDelay(GameObject noticeobj, float delay)
+    private IEnumerator HideNoticeTextAfterDelay(GameObject targetText, float delay, GameObject noticePanel)
     {
-        yield return new WaitForSecondsRealtime(delay); // 타임 스케일 멈춰도 보임
+        yield return new WaitForSeconds(delay);
+        if (targetText != null) targetText.SetActive(false);
+        if (noticePanel != null) noticePanel.SetActive(false);
     }
 
     #endregion

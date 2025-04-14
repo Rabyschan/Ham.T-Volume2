@@ -40,6 +40,22 @@ public class GameDataManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
+    private void Update()
+    {
+        // R 키를 눌렀을 때 체크포인트 위치로 이동
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
+            if (selectedSlot != -1)
+            {
+                LoadCheckpoint(selectedSlot);
+            }
+            else
+            {
+                Debug.LogWarning("선택된 슬롯이 없어 체크포인트 로드를 실행할 수 없습니다.");
+            }
+        }
+    }
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 씬이 로드된 후, 코스튬,스킨 아이템 정리
@@ -118,13 +134,7 @@ public class GameDataManager : MonoBehaviour
 
     public void LoadSlot(int slotId)
     {
-        if (!PlayerPrefs.HasKey($"PlayerPosX_{slotId}")) return;
-
-        HamsterController2.NeedLoadPosition = true;
-        HamsterController2.PositionOnLoad = LoadVector3($"PlayerPos", slotId);
-
-        //player.position = LoadVector3($"PlayerPos", slotId);
-
+    
         int selectedCostume = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
         int selectedSkin = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
 
@@ -147,13 +157,41 @@ public class GameDataManager : MonoBehaviour
         Debug.Log($"슬롯 {slotId} 불러오기 완료");
     }
 
+    #region CheckPoint Load
+    public void LoadCheckpoint(int slotId)
+    {
+        if (!PlayerPrefs.HasKey($"PlayerPosX_{slotId}"))
+        {
+            Debug.LogWarning($"슬롯 {slotId}에는 저장된 위치 데이터가 없습니다.");
+            return;
+        }
+
+        Vector3 checkpointPos = LoadVector3("PlayerPos", slotId);
+
+        if (player != null)
+        {
+            player.position = checkpointPos;
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowNoticeByAnimator(2f, false); // 불러오기 알림
+                Debug.Log($"슬롯 {slotId}의 위치로 플레이어 이동 완료: {checkpointPos}");
+            }
+        }
+        else
+        {
+            Debug.LogError("플레이어 객체가 설정되지 않음. 위치 이동 실패!");
+        }
+    }
+
+    #endregion
+
     public void RemoveSlot(int slotId)
     {
         PlayerPrefs.DeleteKey($"PlayerPosX_{slotId}");
         PlayerPrefs.DeleteKey($"PlayerPosY_{slotId}");
         PlayerPrefs.DeleteKey($"PlayerPosZ_{slotId}");
 
-        // 스튬 & 스킨 정보 삭제
+        // 코스튬 & 스킨 정보 삭제
         PlayerPrefs.DeleteKey($"SelectedCostume_{slotId}");
         PlayerPrefs.DeleteKey($"SelectedSkined_{slotId}");
 
@@ -204,7 +242,6 @@ public class GameDataManager : MonoBehaviour
         }
     }
 
-
     private bool IsSlotSaved(int slotId)
     {
         return PlayerPrefs.HasKey($"SaveTime_{slotId}") &&
@@ -227,5 +264,4 @@ public class GameDataManager : MonoBehaviour
         float z = PlayerPrefs.GetFloat($"{prefix}Z_{slotId}");
         return new Vector3(x, y, z);
     }
-
 }
