@@ -95,7 +95,7 @@ public class ChallengeUI : MonoBehaviour
                 else
                 {
                     // 애니메이터 없으면 그냥 자동 제거
-                    Destroy(popup, 2f);
+                    //Destroy(popup, 2f);
                 }
             }
 

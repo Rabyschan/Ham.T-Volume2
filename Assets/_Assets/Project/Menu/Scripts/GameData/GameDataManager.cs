@@ -3,28 +3,48 @@ using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameDataManager : MonoBehaviour
 {
-    public static GameDataManager Instance { get; private set; }
+    private static GameDataManager _instance;
+    public static GameDataManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindObjectOfType<GameDataManager>();
+
+            if (_instance == null)
+            {
+                _instance = new GameObject() { name = "GameDataManager" }.AddComponent<GameDataManager>();
+                DontDestroyOnLoad(_instance.gameObject);
+            }
+
+            return _instance;
+        }
+    }
 
     public int totalCostumes = 3;
     public int totalSkins = 1;
 
     [SerializeField] private Transform player;
 
-
-    private void Awake()
+    private void OnEnable()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 씬이 로드된 후, 코스튬,스킨 아이템 정리
+        RemoveCollectedCostumeItems();
+        RemoveCollectedSkinItems();
     }
 
     public bool TryGetSlotData(int slotId, out SlotData data)
@@ -147,7 +167,7 @@ public class GameDataManager : MonoBehaviour
 
     private void RemoveCollectedCostumeItems()
     {
-        for (int i = 1; i <= 3; i++)
+        for (int i = 1; i <= totalCostumes; i++)
         {
             if (PlayerPrefs.GetInt($"HasCostume_{i}", 0) == 1)
             {
@@ -158,7 +178,26 @@ public class GameDataManager : MonoBehaviour
                     if (item.costumeId == i)
                     {
                         Destroy(item.gameObject);
-                        Debug.Log($"CostumeItem {i} 이미 보유 중 → 제거");
+                        Debug.Log($"CostumeItem ID {i} 제거 완료 (이미 보유 중)");
+                    }
+                }
+            }
+        }
+    }
+
+    private void RemoveCollectedSkinItems()
+    {
+        for (int i = 1; i <= totalSkins; i++)
+        {
+            if (PlayerPrefs.GetInt($"HasSkin_{i}", 0) == 1)
+            {
+                var items = FindObjectsOfType<SkinItem>(); // SkinItem 타입 찾기
+                foreach (var item in items)
+                {
+                    if (item.skinId == i) // SkinItem에 skinId 변수가 있다고 가정
+                    {
+                        Destroy(item.gameObject);
+                        Debug.Log($"[SkinItem] ID {i} 제거 완료 (이미 보유 중)");
                     }
                 }
             }
@@ -166,7 +205,7 @@ public class GameDataManager : MonoBehaviour
     }
 
 
-private bool IsSlotSaved(int slotId)
+    private bool IsSlotSaved(int slotId)
     {
         return PlayerPrefs.HasKey($"SaveTime_{slotId}") &&
                PlayerPrefs.HasKey($"PlayerPosX_{slotId}") &&

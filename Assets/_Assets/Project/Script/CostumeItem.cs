@@ -39,12 +39,12 @@ public class CostumeItem : MonoBehaviour
 
             CostumeUI.Instance.UpdateBtn(costumeId);
             Debug.Log("UI갱신");
-            UIManager.Instance.ShowNoticeByAnimator($"Get {itemName}!", 2f);
+            //UIManager.Instance.ShowNoticeByAnimator($"Get {itemName}!", 2f);
+            UIManager.Instance.GetCostumeUI(costumeId);
 
             challangeCondition.Instance.GetItem(costumeId);
 
             Destroy(this.gameObject); // 아이템 제거
-            
         }
     }
 }

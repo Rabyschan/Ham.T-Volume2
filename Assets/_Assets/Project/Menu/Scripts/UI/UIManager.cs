@@ -133,6 +133,73 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void GetCostumeUI(int costumeId)
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "GetCostume")
+            {
+                obj.SetActive(true);
+
+                // 모든 자식 코스튬 패널을 먼저 꺼줌
+                for (int i = 1; i <= 3; i++)
+                {
+                    Transform childPanel = obj.transform.Find($"CostumePanel_{i}");
+                    if (childPanel != null)
+                    {
+                        childPanel.gameObject.SetActive(false);
+                    }
+                }
+
+                // 선택된 코스튬 패널만 활성화
+                Transform targetPanel = obj.transform.Find($"CostumePanel_{costumeId}");
+                if (targetPanel != null)
+                    targetPanel.gameObject.SetActive(true);
+
+                StartCoroutine(FadeInOutPanel(obj));
+                break;
+            }
+        }
+    }
+
+    #endregion
+
+    #region FadeInOutPanel
+    private IEnumerator FadeInOutPanel(GameObject panel)
+    {
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.AddComponent<CanvasGroup>();
+        }
+
+        panel.SetActive(true);
+        canvasGroup.alpha = 0f;
+
+        // Fade In
+        float fadeDuration = 0.5f;
+        float elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(elapsed / fadeDuration);
+            yield return null;
+        }
+
+        // Wait for 3 seconds
+        yield return new WaitForSeconds(3f);
+
+        // Fade Out
+        elapsed = 0f;
+        while (elapsed < fadeDuration)
+        {
+            elapsed += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(1 - (elapsed / fadeDuration));
+            yield return null;
+        }
+
+        panel.SetActive(false);
+    }
     #endregion
 
     #region NocticeAnimation

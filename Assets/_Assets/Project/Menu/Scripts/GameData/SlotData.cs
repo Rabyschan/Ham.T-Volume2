@@ -4,6 +4,7 @@ using UnityEngine;
 public struct SlotData
 {
     public int slotId;
+    public int skinId;
     public string saveTime;
     public int costumeCount;
     public int totalCostumes;

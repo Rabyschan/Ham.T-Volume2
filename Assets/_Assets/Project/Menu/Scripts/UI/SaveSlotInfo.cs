@@ -18,24 +18,20 @@ public class SaveSlotInfo : MonoBehaviour
     [SerializeField] private Button load_btn;
     [SerializeField] private Button remove_btn;
 
+    [SerializeField] GameObject savedSlot;
+
     private void Awake()
     {
         bTN_Slot.onClick.AddListener(OnSlotClicked);
+
+        save_btn?.onClick.AddListener(() => GameDataManager.Instance.SaveSlot(slotId));
+        load_btn?.onClick.AddListener(() => GameDataManager.Instance.LoadSlot(slotId));
+        remove_btn?.onClick.AddListener(() => GameDataManager.Instance.RemoveSlot(slotId));
+        bTN_Slot?.onClick.AddListener(OnSlotClicked);
     }
 
-    private void Start()
+    private void Update()
     {
-        // UI 초기화
-        if (GameDataManager.Instance.TryGetSlotData(slotId, out var data))
-        {
-            UpdateUI(data);
-        }
-        else
-        {
-            timeText.text = "No Save";
-            costumeText.text = $"Costume : 0/{GameDataManager.Instance.totalCostumes}";
-            skinText.text = $"Skin : 0/{GameDataManager.Instance.totalSkins}";
-        }
         UpdateSlot(); // 버튼 상태도 초기화
     }
 
@@ -69,6 +65,23 @@ public class SaveSlotInfo : MonoBehaviour
 
         // 무조건 호출되어야 함 (빈 슬롯이든 아니든)
         OnSlotSelected?.Invoke(data);
+    }
+
+    public void RefreshSlotUI()
+    {
+        // UI 초기화
+        if (savedSlot != null && GameDataManager.Instance.TryGetSlotData(slotId, out var data))
+        {
+            savedSlot.gameObject.SetActive(true);
+            UpdateUI(data);
+        }
+        else
+        {
+            savedSlot.gameObject.SetActive(false);
+            //timeText.text = "No Save";
+            //costumeText.text = $"Costume : 0/{GameDataManager.Instance.totalCostumes}";
+            //skinText.text = $"Skin : 0/{GameDataManager.Instance.totalSkins}";
+        }
     }
 
 
