@@ -22,6 +22,7 @@ public class SaveSlotInfo : MonoBehaviour
 
     private void Awake()
     {
+        OnSlotClicked();
         bTN_Slot.onClick.AddListener(OnSlotClicked);
 
         save_btn?.onClick.AddListener(() => GameDataManager.Instance.SaveSlot(slotId));
@@ -65,23 +66,6 @@ public class SaveSlotInfo : MonoBehaviour
 
         // 무조건 호출되어야 함 (빈 슬롯이든 아니든)
         OnSlotSelected?.Invoke(data);
-    }
-
-    public void RefreshSlotUI()
-    {
-        // UI 초기화
-        if (savedSlot != null && GameDataManager.Instance.TryGetSlotData(slotId, out var data))
-        {
-            savedSlot.gameObject.SetActive(true);
-            UpdateUI(data);
-        }
-        else
-        {
-            savedSlot.gameObject.SetActive(false);
-            //timeText.text = "No Save";
-            //costumeText.text = $"Costume : 0/{GameDataManager.Instance.totalCostumes}";
-            //skinText.text = $"Skin : 0/{GameDataManager.Instance.totalSkins}";
-        }
     }
 
     private void UpdateUI(SlotData data)

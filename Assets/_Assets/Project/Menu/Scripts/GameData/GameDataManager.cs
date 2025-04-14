@@ -134,7 +134,6 @@ public class GameDataManager : MonoBehaviour
 
     public void LoadSlot(int slotId)
     {
-    
         int selectedCostume = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
         int selectedSkin = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
 
@@ -153,6 +152,11 @@ public class GameDataManager : MonoBehaviour
             int hasSkin = PlayerPrefs.GetInt($"Slot{slotId}_HasSkin_{i}", 0);
             PlayerPrefs.SetInt($"HasSkin_{i}", hasSkin);
         }
+
+        // 씬이 전환되고 햄스터가 생성되면 해당 위치로 로드
+        Vector3 checkpointPos = LoadVector3("PlayerPos", slotId);
+        HamsterController2.NeedLoadPosition = true;
+        HamsterController2.PositionOnLoad = checkpointPos;
 
         Debug.Log($"슬롯 {slotId} 불러오기 완료");
     }
