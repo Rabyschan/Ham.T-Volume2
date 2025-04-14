@@ -216,8 +216,8 @@ public class UIManager : MonoBehaviour
                 var noticeTransform = obj.transform;
 
                 // 자식 안에서 텍스트 오브젝트 탐색
-                var saveText = noticeTransform.Find("CheckPointSave_Txt")?.gameObject;
-                var loadText = noticeTransform.Find("CheckPointLoad_Txt")?.gameObject;
+                var saveText = noticeTransform.Find("Background/CheckPointSave_Txt")?.gameObject;
+                var loadText = noticeTransform.Find("Background/CheckPointLoad_Txt")?.gameObject;
                 var anim = obj.GetComponent<Animator>();
 
                 if (anim != null)

@@ -43,7 +43,7 @@ namespace ChangeScene
                 PlayerPrefs.SetInt("SelectedSlot", data.slotId);
                 PlayerPrefs.Save();
 
-                GameDataManager.Instance.LoadSlot(data.slotId);
+                GameDataManager.Instance.LoadSlot(data.slotId, data.position != Vector3.zero);
 
                 sceneLoader.LoadGameScene();
             }
