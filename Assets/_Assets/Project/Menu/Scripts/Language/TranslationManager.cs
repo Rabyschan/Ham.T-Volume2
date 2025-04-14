@@ -17,7 +17,7 @@ namespace Language
             UpdateAllText(); // 씬 시작할 때 기존 언어 적용
         }
 
-        private void UpdateAllText()
+        private void UpdateTextInternal(GameObject targetObject)
         {
             if (LanguageManager.instance == null) return;
 
@@ -25,7 +25,18 @@ namespace Language
             TMP_FontAsset primaryFont = LanguageManager.instance.CurrentFontPrimary;
             TMP_FontAsset secondaryFont = LanguageManager.instance.CurrentFontSecondary;
 
-            TextMeshProUGUI[] texts = FindObjectsOfType<TextMeshProUGUI>(true);
+            TextMeshProUGUI[] texts;
+
+            if (targetObject == null)
+            {
+                // 전체 씬에서 찾음
+                texts = FindObjectsOfType<TextMeshProUGUI>(true);
+            }
+            else
+            {
+                // 특정 오브젝트 하위에서만 찾음
+                texts = targetObject.GetComponentsInChildren<TextMeshProUGUI>(true);
+            }
 
             foreach (var textObj in texts)
             {
@@ -47,6 +58,17 @@ namespace Language
                     }
                 }
             }
+        }
+
+        private void UpdateAllText()
+        {
+            UpdateTextInternal(null);
+        }
+
+        public void UpdateText(GameObject targetObject)
+        {
+            // 특정 게임 오브젝트 내의 텍스트만 갱신
+            UpdateTextInternal(targetObject);
         }
     }
 }

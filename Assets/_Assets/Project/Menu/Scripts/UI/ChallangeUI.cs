@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
 using System.Collections;
+using Language;
 
 public class ChallengeUI : MonoBehaviour
 {
@@ -86,6 +87,12 @@ public class ChallengeUI : MonoBehaviour
             if (data != null && data.rewardPrefab != null && canvasParent != null)
             {
                 GameObject popup = Instantiate(data.rewardPrefab, canvasParent);
+
+                TranslationManager translationManager = FindObjectOfType<TranslationManager>();
+                if (translationManager != null)
+                {
+                    translationManager.UpdateText(popup);
+                }
 
                 Animator animator = popup.GetComponent<Animator>();
                 if (animator != null)

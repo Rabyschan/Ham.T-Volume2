@@ -39,8 +39,7 @@ public class CostumeItem : MonoBehaviour
 
             CostumeUI.Instance.UpdateBtn(costumeId);
             Debug.Log("UI°»½Å");
-            //UIManager.Instance.ShowNoticeByAnimator($"Get {itemName}!", 2f);
-            UIManager.Instance.GetCostumeUI(costumeId);
+            //UIManager.Instance.GetCostumeUI(costumeId);
 
             challangeCondition.Instance.GetItem(costumeId);
 
