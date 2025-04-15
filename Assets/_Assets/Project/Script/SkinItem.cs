@@ -28,9 +28,10 @@ public class SkinItem : MonoBehaviour
     {
         if (other.CompareTag("Player")) // 특정 태그의 아이템과 충돌 감지
         {
-            GameManager.Instance.isEating = true;
+            PlayerPrefs.SetInt($"HasSkin_{skinId}", 1);
+            PlayerPrefs.Save();
 
-            //CostumeManager.Instance.AddCostume(costumeId);
+            GameManager.Instance.isEating = true;
 
             CostumeUI.Instance.SkinButton(skinId);
             Debug.Log("UI갱신");

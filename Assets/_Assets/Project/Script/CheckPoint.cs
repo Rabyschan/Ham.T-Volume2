@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
+    private bool canSave = true;
     private bool hasSaved = false; // 중복 방지
 
     private void OnTriggerEnter(Collider other)
@@ -19,15 +20,29 @@ public class CheckPoint : MonoBehaviour
             hasSaved = true;
 
             // 콜라이더 비활성화 (또는 오브젝트 제거)
-            // 1) 콜라이더만 비활성화:
             GetComponent<Collider>().enabled = false;
-
-            // 2) 혹시 시각적 표시도 없애고 싶다면 전체 제거:
-            // Destroy(gameObject);
         }
         else
         {
             Debug.LogWarning("저장 슬롯이 선택되지 않음 → 자동 저장 건너뜀");
         }
+
+        if (!canSave) return;
+
+        if (other.CompareTag("Player"))
+        {
+            // 저장 처리
+            //GameDataManager.Instance.SaveSlot(currentSlotId);
+            Debug.Log("체크포인트 저장!");
+
+            StartCoroutine(SaveCooldown());
+        }
+    }
+
+    private IEnumerator SaveCooldown()
+    {
+        canSave = false;
+        yield return new WaitForSeconds(1.0f); // 1초 정도 저장 쿨타임
+        canSave = true;
     }
 }

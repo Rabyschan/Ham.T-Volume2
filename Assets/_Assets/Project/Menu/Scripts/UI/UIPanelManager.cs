@@ -121,7 +121,6 @@ public class UIPanelManager : MonoBehaviour
         {
             bool hasSave = GameDataManager.Instance != null && GameDataManager.Instance.TryGetSlotData(i, out _);
 
-            Debug.Log($"{i}는 {hasSave}");
             string savePanelName = $"Slot{i}Save";
             string emptyPanelName = $"Slot{i}Empty";
 

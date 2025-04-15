@@ -4,6 +4,8 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
+using System.Collections;
 
 public class GameDataManager : MonoBehaviour
 {
@@ -27,6 +29,7 @@ public class GameDataManager : MonoBehaviour
 
     public int totalCostumes = 3;
     public int totalSkins = 1;
+    public int score;
 
     [SerializeField] private Transform player;
 
@@ -86,6 +89,8 @@ public class GameDataManager : MonoBehaviour
                 data.skinCount++;
         }
 
+        data.score = PlayerPrefs.GetInt($"Score_{slotId}", score);
+
         data.totalCostumes = totalCostumes;
         data.totalSkins = totalSkins;
 
@@ -103,6 +108,11 @@ public class GameDataManager : MonoBehaviour
             // 플레이어 객체가 없을 경우 기본 위치 저장 (선택사항)
             SaveVector3("PlayerPos", slotId, Vector3.zero);
         }
+
+        // 점수 저장 추가
+        int currentScore = GameManager.Instance.GetScore();
+        PlayerPrefs.SetInt($"Score_{slotId}", currentScore);
+        Debug.Log($"점수 : {currentScore} 저장");
 
         // 선택된 코스튬/스킨 저장
         int selectedCostume = PlayerPrefs.GetInt("SelectedCostume", 0);
@@ -132,13 +142,21 @@ public class GameDataManager : MonoBehaviour
         Debug.Log($"슬롯 {slotId} 저장 완료");
     }
 
-    public void LoadSlot(int slotId, bool needLoadPosition = false)
+    public void LoadSlot(int slotId)
     {
+        // 로딩 시작: 체크포인트 중복 저장 방지용
+        GameManager.Instance.IsLoading = true;
+
         int selectedCostume = PlayerPrefs.GetInt($"SelectedCostume_{slotId}", 0);
         int selectedSkin = PlayerPrefs.GetInt($"SelectedSkined_{slotId}", 0);
 
         PlayerPrefs.SetInt("SelectedCostume", selectedCostume);
         PlayerPrefs.SetInt("SelectedSkined", selectedSkin);
+
+        int loadedScore = PlayerPrefs.GetInt($"Score_{slotId}", 0);
+        //GameManager.Instance.SetScoreDirect(loadedScore); // 점수 직접 설정
+        Debug.Log($"불러온 점수: {loadedScore}");
+
 
         // 복원: 코스튬/스킨 보유 정보
         for (int i = 1; i <= totalCostumes; i++)
@@ -153,15 +171,19 @@ public class GameDataManager : MonoBehaviour
             PlayerPrefs.SetInt($"HasSkin_{i}", hasSkin);
         }
 
-        if (needLoadPosition)
-        {
-            // 씬이 전환되고 햄스터가 생성되면 해당 위치로 로드
-            Vector3 checkpointPos = LoadVector3("PlayerPos", slotId);
-            HamsterController2.NeedLoadPosition = true;
-            HamsterController2.PositionOnLoad = checkpointPos;
-        }
+        // 로딩 완료 후 1초 후 플래그 해제
+        GameManager.Instance.StartCoroutine(FinishLoading());
 
         Debug.Log($"슬롯 {slotId} 불러오기 완료");
+    }
+
+    private IEnumerator FinishLoading()
+    {
+        yield return new WaitForSeconds(3f); // 로딩 중 저장 금지 시간
+        GameManager.Instance.IsLoading = false;
+        Debug.Log("[LOAD] 로딩 완료, 저장 허용");
+
+        //UIManager.Instance.ScoreUI(GameManager.Instance.GetScore());
     }
 
     #region CheckPoint Load
@@ -194,6 +216,7 @@ public class GameDataManager : MonoBehaviour
 
     public void RemoveSlot(int slotId)
     {
+        // 위치 정보 삭제
         PlayerPrefs.DeleteKey($"PlayerPosX_{slotId}");
         PlayerPrefs.DeleteKey($"PlayerPosY_{slotId}");
         PlayerPrefs.DeleteKey($"PlayerPosZ_{slotId}");
@@ -205,7 +228,12 @@ public class GameDataManager : MonoBehaviour
         PlayerPrefs.DeleteKey($"IsSaved_{slotId}");
 
         PlayerPrefs.DeleteKey($"HasCostume_{slotId}");
+
+        // 저장 시간 삭제
         PlayerPrefs.DeleteKey($"SaveTime_{slotId}");
+
+        // 점수 삭제
+        PlayerPrefs.DeleteKey($"Score_{slotId}");
 
         Debug.Log($"슬롯 {slotId}: 저장된 위치 데이터 삭제 완료");
     }

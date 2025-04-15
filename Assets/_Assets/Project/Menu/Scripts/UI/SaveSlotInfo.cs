@@ -28,7 +28,7 @@ public class SaveSlotInfo : MonoBehaviour
         save_btn?.onClick.AddListener(() => GameDataManager.Instance.SaveSlot(slotId));
         load_btn?.onClick.AddListener(() => GameDataManager.Instance.LoadSlot(slotId));
         remove_btn?.onClick.AddListener(() => GameDataManager.Instance.RemoveSlot(slotId));
-        bTN_Slot?.onClick.AddListener(OnSlotClicked);
+        //bTN_Slot?.onClick.AddListener(OnSlotClicked);
     }
 
     private void Update()
@@ -59,7 +59,8 @@ public class SaveSlotInfo : MonoBehaviour
                 totalCostumes = GameDataManager.Instance.totalCostumes,
                 skinCount = 0,
                 totalSkins = GameDataManager.Instance.totalSkins,
-                position = Vector3.zero
+                position = Vector3.zero,
+                score = GameDataManager.Instance.score
             };
             UpdateUI(data); // 빈 슬롯도 UI 업데이트 필요함
         }
@@ -73,5 +74,6 @@ public class SaveSlotInfo : MonoBehaviour
         timeText.text = data.saveTime;
         costumeText.text = $"Costume : {data.costumeCount}/{data.totalCostumes}";
         skinText.text = $"Skin : {data.skinCount}/{data.totalSkins}";
+        Debug.Log(data.skinCount);
     }
 }

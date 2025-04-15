@@ -3,6 +3,7 @@ public class Seed : MonoBehaviour
 {
     [SerializeField] private float rotationSpeed = 450f;
     [SerializeField] GameObject seed;
+    public int scoreValue = 0;
 
     Vector3 _origin;
 
@@ -24,8 +25,10 @@ public class Seed : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GameManager.Instance.isEating = true;
-            GameManager.Instance.SetScore(1f);
             challangeCondition.Instance.SeedScore();
+            GameManager.Instance.AddScore(scoreValue);
+            Debug.Log(scoreValue);
+            Destroy(gameObject);
 
             Debug.Log("스코어 증가");
             seed.SetActive(false);
