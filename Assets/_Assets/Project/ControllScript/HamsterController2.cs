@@ -256,6 +256,7 @@ public class HamsterController2 : MonoBehaviour
                 return;
             isJumping = true;
             climbing = false;
+            _capsuleCollider.direction = 2;
             _rigidbody.useGravity = true; // 벽에서 떨어지면 Rigidbody 다시 활성화
         }
     }
