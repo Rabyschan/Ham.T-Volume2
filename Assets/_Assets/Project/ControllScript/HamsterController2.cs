@@ -6,7 +6,8 @@ public class HamsterController2 : MonoBehaviour
     public static bool NeedLoadPosition { get; set; }
     public static Vector3 PositionOnLoad { get; set; }
 
-    [SerializeField] float raycastDist = 0.1f;
+    [SerializeField] float groundRaycastDist = 0.1f;
+    [SerializeField] float curtainRaycastDist = 0.1f;
 
     [Header("Player")]
     public float moveSpeed; //1
@@ -17,9 +18,6 @@ public class HamsterController2 : MonoBehaviour
 
     [Tooltip("메인 카메라")]
     public Camera _camera; // 메인 카메라
-
-    [Tooltip("변경하고 싶은 포지션 값이 담긴 오브젝트")]
-    public GameObject targetObject; // 변경하고 싶은 포지션 값이 담긴 오브젝트
 
     [Header("Animation")]
 
@@ -41,12 +39,14 @@ public class HamsterController2 : MonoBehaviour
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
     private float _frontInput; // frontinput 값
     private Rigidbody _rigidbody;
+    private CapsuleCollider _capsuleCollider;
     private float realMoveSpeed;
 
     public void Awake()
     {
         _camera = Camera.main;
         _rigidbody = GetComponent<Rigidbody>();
+        _capsuleCollider = GetComponent<CapsuleCollider>();
 
         if (NeedLoadPosition)
             LoadPosition();
@@ -75,13 +75,20 @@ public class HamsterController2 : MonoBehaviour
 
             if (climbing)
             {
-                HandleClimbing();
-                ClimbingJump();
+                if (IsFrontCurtain()) // 앞에 Curtain이 있을 때만 클라이밍 유지
+                {
+                    HandleClimbing();
+                    ClimbingJump();
+                }
+                else
+                {
+                    ClimbingStop(); // Curtain이 없으면 자동으로 클라이밍 멈춤
+                }
             }
-            if (isNearObject && Input.GetKeyDown(KeyCode.E) && !climbing)
+            if (Input.GetKeyDown(KeyCode.E) && !climbing)
             {
                 // E 키를 눌렀을 때 클라이밍 시작
-                if (!startClimbing) // 이미 시작 중이 아니면 클라이밍을 시작
+                if (!startClimbing && IsFrontCurtain()) // 이미 시작 중이 아니면 클라이밍을 시작
                 {
                     startClimbing = true;
                     StartCoroutine(WaitStartClimbing(0.1f));  // 1초 대기 후 클라이밍 시작
@@ -105,8 +112,22 @@ public class HamsterController2 : MonoBehaviour
     public bool IsGrounded()
     {
         // 아래로 레이캐스트를 쏴서 바닥에 닿았는지 체크
-        return Physics.Raycast(transform.position, Vector3.down, raycastDist); // 작은 거리로 바닥 체크
+        return Physics.Raycast(transform.position, Vector3.down, groundRaycastDist); // 작은 거리로 바닥 체크
 
+    }
+
+    private bool IsFrontCurtain()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, curtainRaycastDist))
+        {
+            if (hit.collider.CompareTag("Curtain"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     #region Move/Sprint/Jump
@@ -182,13 +203,6 @@ public class HamsterController2 : MonoBehaviour
         {
             isNearObject = true;
         }
-        else if (collision.collider.CompareTag("Stop"))
-        {
-            stopClimbing = true;
-            _rigidbody.useGravity = true;
-            ClimbingStop();
-        }
-
     }
 
     public void OnCollisionExit(Collision collision)
@@ -198,13 +212,13 @@ public class HamsterController2 : MonoBehaviour
             isNearObject = false;
         }
     }
-
     #endregion
 
     #region Climbing Start/Stop
     public void HandleClimbing()
     {
         _rigidbody.useGravity = false; // 벽을 탈 때 중력 비활성화
+        _capsuleCollider.direction = 1;
         _frontInput = Input.GetAxis("Vertical");  // 상하 입력
 
         if (Mathf.Abs(_frontInput) > 0.1f)  // 입력이 있으면 isClimbing을 true로 설정
@@ -225,7 +239,9 @@ public class HamsterController2 : MonoBehaviour
     {
         isClimbing = false; // 클라이밍 상태 종료
         climbing = false;
-        transform.position = targetObject.transform.position; // 포지션 변경
+        stopClimbing = true;
+        _capsuleCollider.direction = 2;
+        transform.position += transform.forward * 0.2f;
         StartCoroutine(WaitStop(1f)); // Stop 후 대기
     }
 
@@ -284,5 +300,13 @@ public class HamsterController2 : MonoBehaviour
             awake = true;
             StartCoroutine(WaitStart(2f));  // 2초 대기 후 이동 가능하게 설정
         }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(transform.position, transform.forward * curtainRaycastDist);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, Vector3.down * groundRaycastDist);
     }
 }
