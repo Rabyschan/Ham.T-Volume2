@@ -7,6 +7,22 @@ public class CheckPoint : MonoBehaviour
     private bool canSave = true;
     private bool hasSaved = false; // 중복 방지
 
+    private void Start()
+    {
+        int slotId = PlayerPrefs.GetInt("SelectedSlot", -1);
+        if (slotId == -1) return;
+
+        Vector3 savedPos = GameDataManager.Instance.LoadVector3("PlayerPos", slotId);
+
+        // 거리가 가까우면 로드된 위치와 동일한 체크포인트로 판단
+        if (Vector3.Distance(transform.position, savedPos) < 1f)
+        {
+            // Collider 끄기
+            GetComponent<Collider>().enabled = false;
+            Debug.Log("[CheckPoint] 로드된 위치의 체크포인트입니다. 자동 저장 방지용 콜라이더 비활성화");
+        }
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         int slotId = PlayerPrefs.GetInt("SelectedSlot", -1); // 선택된 슬롯 확인

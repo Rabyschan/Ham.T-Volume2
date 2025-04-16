@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -160,7 +161,20 @@ public class UIManager : MonoBehaviour
                 if (targetPanel != null)
                     targetPanel.gameObject.SetActive(true);
 
-                StartCoroutine(FadeInOutPanel(obj));
+                StartCoroutine(FadeInOutPanel(obj, 3f));
+                break;
+            }
+        }
+    }
+
+    public void DeletedSlot()
+    {
+        foreach (var obj in UIPanelManager.Instance.uiPanels)
+        {
+            if (obj.name == "DeletedNotice_Panel")
+            {
+                obj.SetActive(true);
+                StartCoroutine(FadeInOutPanel(obj, 2f));
                 break;
             }
         }
@@ -169,7 +183,7 @@ public class UIManager : MonoBehaviour
     #endregion
 
     #region FadeInOutPanel
-    private IEnumerator FadeInOutPanel(GameObject panel)
+    public IEnumerator FadeInOutPanel(GameObject panel, float waitSecond)
     {
         CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
         if (canvasGroup == null)
@@ -191,7 +205,7 @@ public class UIManager : MonoBehaviour
         }
 
         // Wait for 3 seconds
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(waitSecond);
 
         // Fade Out
         elapsed = 0f;

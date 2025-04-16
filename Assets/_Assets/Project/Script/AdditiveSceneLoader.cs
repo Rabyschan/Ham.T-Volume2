@@ -104,7 +104,6 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             if (_player != null)
             {
-                //_costumescenePlayer.allowInput = false;
                 _player.canMove = false; // 입력 정지
             }
         }
@@ -112,7 +111,6 @@ public class AdditiveSceneLoader : MonoBehaviour
         {
             if (_player != null)
             {
-                //_costumescenePlayer.allowInput = true;
                 _player.canMove = true; // 다시 입력 허용
             }
         }

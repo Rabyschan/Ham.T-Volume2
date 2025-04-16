@@ -134,7 +134,7 @@ public class HamsterAnimator : MonoBehaviour
         {
             hamsterController.canMove = false;
             playerAnimator.SetBool("IsEating", true);
-            GameManager.Instance.isEating = false;
+            //GameManager.Instance.isEating = false;
             StartCoroutine(Wait(1.5f));
         }
         else
@@ -148,6 +148,7 @@ public class HamsterAnimator : MonoBehaviour
     private IEnumerator Wait(float waitTime)
     {
         yield return new WaitForSeconds(waitTime);  // 2초 대기
+        GameManager.Instance.isEating = false;
         hamsterController.canMove = true;  // 이동 가능
     }
 }

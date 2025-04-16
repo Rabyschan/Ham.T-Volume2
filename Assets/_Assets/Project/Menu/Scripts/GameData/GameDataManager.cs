@@ -292,7 +292,7 @@ public class GameDataManager : MonoBehaviour
         PlayerPrefs.SetFloat($"{prefix}Z_{slotId}", position.z);
     }
 
-    private Vector3 LoadVector3(string prefix, int slotId)
+    public Vector3 LoadVector3(string prefix, int slotId)
     {
         float x = PlayerPrefs.GetFloat($"{prefix}X_{slotId}");
         float y = PlayerPrefs.GetFloat($"{prefix}Y_{slotId}");

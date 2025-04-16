@@ -25,10 +25,11 @@ public class ResetOnStart : MonoBehaviour
     {
         // 씬이 전환된 후 점수 UI 갱신
         int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
-        StartCoroutine(DelayedScoreLoad());
+        StartCoroutine(DelayedScoreLoad(selectedSlot));
+        GameDataManager.Instance.LoadCheckpoint(selectedSlot);
     }
 
-    IEnumerator DelayedScoreLoad()
+    IEnumerator DelayedScoreLoad(int selectedSlot)
     {
         // UIManager 인스턴스가 완성될 때까지 기다림
         yield return new WaitUntil(() => UIManager.Instance != null);
@@ -36,7 +37,7 @@ public class ResetOnStart : MonoBehaviour
         // ScoreText가 씬에 실제로 생성된 다음 한 프레임 대기
         yield return null;
 
-        int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
+        //int selectedSlot = PlayerPrefs.GetInt("SelectedSlot", -1);
         int loadedScore = PlayerPrefs.GetInt($"Score_{selectedSlot}", 0);
 
         Debug.Log($"로드된 점수: {loadedScore}");

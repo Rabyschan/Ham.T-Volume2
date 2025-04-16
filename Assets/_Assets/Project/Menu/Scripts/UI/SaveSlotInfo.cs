@@ -13,9 +13,8 @@ public class SaveSlotInfo : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI skinText;
     [SerializeField] private TextMeshProUGUI costumeText;
+    [SerializeField] private TextMeshProUGUI scoreText;
 
-    [SerializeField] private Button save_btn;
-    [SerializeField] private Button load_btn;
     [SerializeField] private Button remove_btn;
 
     [SerializeField] GameObject savedSlot;
@@ -25,8 +24,6 @@ public class SaveSlotInfo : MonoBehaviour
         OnSlotClicked();
         bTN_Slot.onClick.AddListener(OnSlotClicked);
 
-        save_btn?.onClick.AddListener(() => GameDataManager.Instance.SaveSlot(slotId));
-        load_btn?.onClick.AddListener(() => GameDataManager.Instance.LoadSlot(slotId));
         remove_btn?.onClick.AddListener(() => GameDataManager.Instance.RemoveSlot(slotId));
         //bTN_Slot?.onClick.AddListener(OnSlotClicked);
     }
@@ -74,6 +71,6 @@ public class SaveSlotInfo : MonoBehaviour
         timeText.text = data.saveTime;
         costumeText.text = $"Costume : {data.costumeCount}/{data.totalCostumes}";
         skinText.text = $"Skin : {data.skinCount}/{data.totalSkins}";
-        Debug.Log(data.skinCount);
+        scoreText.text = $"Score : {data.score}";
     }
 }

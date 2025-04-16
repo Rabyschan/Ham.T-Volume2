@@ -40,7 +40,7 @@ public class challangeCondition : MonoBehaviour
         float seedScore = GameManager.Instance.score;
         float totalSeedScore = GameManager.Instance.totalScore;
 
-        if (seedScore ==1)
+        if (seedScore == 9)
         {
             ChallengeUI.Instance.CompleteCondition(5);
         }
