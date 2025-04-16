@@ -36,6 +36,7 @@ public class HamsterController2 : MonoBehaviour
     [Header("-------------------------------------------------------")]
     public bool canMove = false;  // 이동 가능 여부
     private bool canJump = true;
+    private bool jumpRequested = false;
     private bool isNearObject = false; // 콜라이더에 닿았는지 여부
     private float _frontInput; // frontinput 값
     private Rigidbody _rigidbody;
@@ -65,11 +66,17 @@ public class HamsterController2 : MonoBehaviour
             HandleMove();
             HandleSprint();
 
-            if (canJump)
+            if (canJump && IsGrounded())
             {
-                if (IsGrounded())
+                if (isJumping && _rigidbody.velocity.y <= 0.01f)
+                {
+                    isJumping = false;
+                }
+
+                if (jumpRequested)
                 {
                     HandleJump();
+                    jumpRequested = false;  // 점프 처리 완료 후 초기화
                 }
             }
 
@@ -78,20 +85,14 @@ public class HamsterController2 : MonoBehaviour
                 if (IsFrontCurtain()) // 앞에 Curtain이 있을 때만 클라이밍 유지
                 {
                     HandleClimbing();
-                    ClimbingJump();
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        ClimbingJump();
+                    }
                 }
                 else
                 {
                     ClimbingStop(); // Curtain이 없으면 자동으로 클라이밍 멈춤
-                }
-            }
-            if (Input.GetKeyDown(KeyCode.E) && !climbing)
-            {
-                // E 키를 눌렀을 때 클라이밍 시작
-                if (!startClimbing && IsFrontCurtain()) // 이미 시작 중이 아니면 클라이밍을 시작
-                {
-                    startClimbing = true;
-                    StartCoroutine(WaitStartClimbing(0.1f));  // 1초 대기 후 클라이밍 시작
                 }
             }
         }
@@ -102,9 +103,19 @@ public class HamsterController2 : MonoBehaviour
     {
         inAir = !IsGrounded();
 
+        if (Input.GetKeyDown(KeyCode.E) && !climbing && !startClimbing && IsFrontCurtain())
+        {
+            startClimbing = true;
+            StartCoroutine(WaitStartClimbing(0.1f));
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && !isJumping && canJump)
+        {
+            jumpRequested = true;
+        }
+
         if (IsGrounded())
         {
-            isJumping = false;
             _rigidbody.useGravity = true;
         }
     }
@@ -183,14 +194,11 @@ public class HamsterController2 : MonoBehaviour
 
     public void HandleJump()
     {
-        if (isJumping)
-            return;
-
-        if (Input.GetKey(KeyCode.Space) == false)
+        if (!canJump || isJumping)
             return;
 
         _rigidbody.AddForce(transform.up * jumpPower * 100f);
-
+        isJumping = true;
         canJump = false;
         StartCoroutine(StopJump(jumpWaitTime));
     }
@@ -240,6 +248,8 @@ public class HamsterController2 : MonoBehaviour
         isClimbing = false; // 클라이밍 상태 종료
         climbing = false;
         stopClimbing = true;
+
+        _rigidbody.useGravity = true; // 여기 추가
         _capsuleCollider.direction = 2;
         transform.position += transform.forward * 0.2f;
         StartCoroutine(WaitStop(1f)); // Stop 후 대기
@@ -247,18 +257,17 @@ public class HamsterController2 : MonoBehaviour
 
     public void ClimbingJump()
     {
-        if (climbing)
-        {
-            if (isJumping)
-                return;
+        isJumping = true;
+        climbing = false;
+        isClimbing = false;
 
-            if (Input.GetKey(KeyCode.Space) == false)
-                return;
-            isJumping = true;
-            climbing = false;
-            _capsuleCollider.direction = 2;
-            _rigidbody.useGravity = true; // 벽에서 떨어지면 Rigidbody 다시 활성화
-        }
+        _capsuleCollider.direction = 2;
+        _rigidbody.useGravity = true;
+
+        // 뒤로 살짝 밀어서 떨어지게 처리
+        transform.position -= transform.forward * 0.1f;
+
+        StartCoroutine(StopJump(jumpWaitTime));
     }
     #endregion
 
