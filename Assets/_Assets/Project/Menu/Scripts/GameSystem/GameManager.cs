@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         score += newScore;
         Debug.Log(score);
         UIManager.Instance.ScoreUI(score);
-        //AudioManager.Instance.PlaySound(SoundType.Eat);
+        AudioManager.Instance.PlaySound(SoundType.Eat);
     }
 
     //현재 점수를 반환함

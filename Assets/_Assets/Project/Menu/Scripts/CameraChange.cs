@@ -9,7 +9,6 @@ public class CameraChange : MonoBehaviour
     [SerializeField] GameObject hamster;
     [SerializeField] GameObject c_hamster;
 
-    [SerializeField] SkinnedMeshRenderer hamsterMesh;
     [SerializeField] CinemachineDollyCart cart;
     [SerializeField] Transform hamsterPosition;
 

@@ -20,7 +20,7 @@ public class ButtonManager_Game : MonoBehaviour
 
     [Header("Pause_Pop-up")]
     //[SerializeField] Button bTN_P_Save_Yes;
-    [SerializeField] Button bTN_P_Save_No;
+    //[SerializeField] Button bTN_P_Save_No;
     [SerializeField] Button bTN_P_Quit_No;
     [SerializeField] Button bTN_P_Challenge;
 
@@ -51,7 +51,6 @@ public class ButtonManager_Game : MonoBehaviour
             {ButtonType.P_Option_Game,bTN_P_Option_Game},
             {ButtonType.P_Option_Quit,bTN_P_Option_Quit},
 
-            {ButtonType.P_Save_No,bTN_P_Save_No},
             {ButtonType.P_Quit_No,bTN_P_Quit_No},
 
             {ButtonType.P_Challenge,bTN_P_Challenge}
